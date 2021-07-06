@@ -8,6 +8,7 @@
 package com.weather.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -17,6 +18,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -33,7 +35,7 @@ public class WeatherController{
 	@Autowired
     private WeatherService weatherService;
 	
-	/* Returning all the weather data */
+	/* Fetch all the stored weather data from h2 data store */
 	@GetMapping("/weather")
 	@ResponseBody
 	public ResponseEntity<List<Weather>> readAllWeather() throws Exception {
@@ -44,19 +46,22 @@ public class WeatherController{
 	}
 	
 	/* Returning all the weather filtered by date */
-	@GetMapping("/weather/{date}")
-	public void readByDate(String dateFilter){
-		weatherService.filterByDate(dateFilter);
+	@GetMapping("/weather/{dateFilter}")
+	public ResponseEntity<List<Weather>> readByDate(@PathVariable Date dateFilter){
+		List<Weather> list= new ArrayList<Weather>();
+		list=weatherService.filterByDate(dateFilter);
+		HttpHeaders responseHeaders = new HttpHeaders();
+		return ResponseEntity.ok().headers(responseHeaders).body(list);	
 	}
-	
-	@PostMapping(value="/weather")//,
+	/* Create weather record */
+	@PostMapping(value="/weather")
 	public ResponseEntity<Weather> createWeather(@RequestBody Weather weather) throws Exception{
 		Weather persistedWeather = weatherService.create(weather);
 		HttpHeaders responseHeaders = new HttpHeaders();
 		return ResponseEntity.ok().headers(responseHeaders).body(persistedWeather);	
 	}
 	
-	/* delete all weather data */
+	/* Delete all weather data */
 	@DeleteMapping("/erase")
 	public void deleteWeather(){
 		weatherService.eraseAll();

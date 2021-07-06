@@ -18,7 +18,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.GenericGenerator;
-import org.json.JSONObject;
+import org.springframework.format.annotation.DateTimeFormat;
 
 
 @Entity
@@ -30,8 +30,9 @@ public class Weather {
   @Column(name = "ID")
   private Long id;
 
-  @Temporal(value = TemporalType.DATE)
   @Column(name = "date")
+  @Temporal(value = TemporalType.DATE)
+  @DateTimeFormat(pattern = "yyyy-MM-dd")
   private Date date;
 
   
@@ -43,30 +44,28 @@ public class Weather {
  private Location location;
 
   public Long getId() {
-		return id;
-	}
+		return id;}
 
-	public void setId(Long id) {
-		id = id;
-	}
+  public void setId(Long id) {
+	  this.id = id;}
 	
   public Date getDate() {
-  	return this.date; }
+  	return this.date;}
   
   public void setDate( Date date ) { 
-  	this.date = date; }
+  	this.date = date;}
   
   public Double[] getTemperature() {
-  	return this.temperature; }
+  	return this.temperature;}
   
   public void setTemperature(Double[] temperature ) { 
-  	this.temperature = temperature; }
+  	this.temperature = temperature;}
 
  public Location getLocation() {
-  	return this.location; }
+  	return this.location;}
   
   public void setLocation( Location location ) { 
-  	this.location = location; } 
+  	this.location = location;} 
   
 }
 
