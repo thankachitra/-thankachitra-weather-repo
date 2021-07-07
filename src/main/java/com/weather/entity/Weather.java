@@ -20,52 +20,55 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.format.annotation.DateTimeFormat;
 
-
+//defining class name as Table name  , A table with the name Weather will be created in H2 */
 @Entity
 public class Weather {
-  
-  @Id
-  @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-  @GenericGenerator(name = "native", strategy = "native")
-  @Column(name = "ID")
-  private Long id;
 
-  @Column(name = "date")
-  @Temporal(value = TemporalType.DATE)
-  @DateTimeFormat(pattern = "yyyy-MM-dd")
-  private Date date;
+	//define primary key as id , auto generated value 
+	@Id
+//	@GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+//	@GenericGenerator(name = "native", strategy = "native")
+	@Column(name = "ID")
+	private Long id;
 
-  
-@Column(name = "temperature")
-  private Double[] temperature;
-  
- @Embedded
- @Column(name = "location")
- private Location location;
+	//define date column name 
+	@Column(name = "date")
+	@Temporal(value = TemporalType.DATE)
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	private Date date;
 
-  public Long getId() {
+	//define temperature as column name
+	@Column(name = "temperature")
+	private Double[] temperature;
+  
+	//define Location as an embedded object in the weather table
+	@Embedded
+	@Column(name = "location")
+	private Location location;
+
+	public Long getId(){
 		return id;}
 
-  public void setId(Long id) {
-	  this.id = id;}
+	public void setId(Long id){
+		this.id = id;}
 	
-  public Date getDate() {
-  	return this.date;}
+	public Date getDate(){
+		return this.date;}
   
-  public void setDate( Date date ) { 
-  	this.date = date;}
-  
-  public Double[] getTemperature() {
-  	return this.temperature;}
-  
-  public void setTemperature(Double[] temperature ) { 
-  	this.temperature = temperature;}
+	public void setDate(Date date){ 
+		this.date = date;}
+	
+	public Double[] getTemperature(){
+		return this.temperature;}
+	
+	public void setTemperature(Double[] temperature){ 
+		this.temperature = temperature;}
 
- public Location getLocation() {
-  	return this.location;}
-  
-  public void setLocation( Location location ) { 
-  	this.location = location;} 
+	public Location getLocation(){
+		return this.location;}
+	
+	public void setLocation(Location location){ 
+		this.location = location;} 
   
 }
 

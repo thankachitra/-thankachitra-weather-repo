@@ -8,6 +8,7 @@
 package com.weather.service;
 
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.slf4j.Logger;
@@ -17,39 +18,63 @@ import org.springframework.stereotype.Component;
 import com.weather.entity.Weather;
 import com.weather.repository.WeatherRepository;
 
+import org.springframework.data.domain.Sort;
+
 @Component
 public class WeatherService {
 	
 	private static final Logger logger = LoggerFactory.getLogger(WeatherService.class);
 
+	// autowired the weather repository class to perform DB operations EX. findAll, findByDate, save and deleteAll on weather table
 	@Autowired
 	private WeatherRepository weatherRepository;
 	
-	public  List<Weather>  readAllWeatherData() throws Exception
+	public List<Weather> readAllWeather()
 	{
-		logger.info("readWeatherAllData");
-		List<Weather> weatherList =weatherRepository.findAll();
+		logger.info("called readWeatherAllData service Method");
+		List<Weather> weatherList = new ArrayList<Weather>();
+      //sort the result based on id value 
+		Iterable<Weather> weatherIterator=weatherRepository.findAll(Sort.by("id").ascending());
+		weatherIterator.forEach(weatherList::add);
 		return weatherList;
 	}
 	
-	public List<Weather> filterByDate(Date filterByDate)
+	public List<Weather> filterWeatherByDate(Date filterByDate)
 	{
-		logger.info("weather filterByDate " +filterByDate);
+		logger.info("called weather filterByDate " +filterByDate);
 		List<Weather> weatherList =weatherRepository.findByDate(filterByDate);
 		return weatherList;
 	}
 	
-	public Weather create(Weather weatherObj) throws Exception
+	public Weather addWeather(Weather weatherObj)
 	{
-		logger.info("adding a new weather data" +weatherObj);
-		Weather persistentWeather =weatherRepository.save(weatherObj);
+		Weather persistentWeather = null;
+		logger.info("called addWeather service Method" +weatherObj + weatherObj.getId());
+		if (!weatherRepository.existsById(weatherObj.getId()))
+		{
+			logger.info("weather obj Id "+ weatherObj.getId() +" not exists. create weather Record");
+			persistentWeather =weatherRepository.save(weatherObj);
+			logger.info("weather record created" +persistentWeather);
+		}
+		else
+		{
+			logger.info("weather obj Id "+ weatherObj.getId() +" already exists. respond with statuc code 400 BAD REQUEST ");
+
+		}
 		return persistentWeather;
 	}
 	
-	public void eraseAll()
+	public void eraseAllWeather()
 	{
-		logger.info("weather eraseAll ");
+		try {
+		logger.info("called  eraseAllWeather service method ");
 		weatherRepository.deleteAll();
+		logger.info("finished  eraseAllWeather service method ");
+		}
+		catch(Exception e) {
+		logger.debug(e.toString());
+		}
+
 	}
 }
 
