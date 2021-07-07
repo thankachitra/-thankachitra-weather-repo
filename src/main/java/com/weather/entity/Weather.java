@@ -8,16 +8,22 @@ package com.weather.entity;
 
 
 import java.util.Date;
+import java.util.List;
+
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 import org.springframework.format.annotation.DateTimeFormat;
 
 //defining class name as Table name  , A table with the name Weather will be created in H2 */
@@ -26,8 +32,12 @@ public class Weather {
 
 	//define primary key as id , auto generated value 
 	@Id
+	
+	/* this can be uncommented if the requirement is auto generate the unique id value */
+	
 //	@GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
 //	@GenericGenerator(name = "native", strategy = "native")
+	
 	@Column(name = "ID")
 	private Long id;
 
@@ -38,8 +48,9 @@ public class Weather {
 	private Date date;
 
 	//define temperature as column name
-	@Column(name = "temperature")
-	private Double[] temperature;
+	@Column(name = "temperature" )
+    @ElementCollection(targetClass=Double.class)
+	private List<Double> temperature;
   
 	//define Location as an embedded object in the weather table
 	@Embedded
@@ -58,10 +69,10 @@ public class Weather {
 	public void setDate(Date date){ 
 		this.date = date;}
 	
-	public Double[] getTemperature(){
+	public List<Double> getTemperature(){
 		return this.temperature;}
 	
-	public void setTemperature(Double[] temperature){ 
+	public void setTemperature(List<Double>  temperature){ 
 		this.temperature = temperature;}
 
 	public Location getLocation(){

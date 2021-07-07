@@ -10,10 +10,14 @@ package com.weather.controller;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,13 +47,13 @@ public class WeatherController{
 	public ResponseEntity<List<Weather>> readAllWeather() {
 		try {
 			List<Weather> list= new ArrayList<Weather>();
-			
 			list=weatherService.readAllWeather();
-						
-			HttpHeaders responseHeaders = new HttpHeaders();
 			
 			// return HTTP Response code 200=HttpStatus.OK if the records are fetched successfully 
-			return ResponseEntity.status(HttpStatus.OK).body(list);	
+			return ResponseEntity.
+					status(HttpStatus.OK).
+					cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)). /// enable browser caching  
+					body(list);	
 			//return ResponseEntity.ok().headers(responseHeaders).body(list);
 		}
 		catch(Exception e) {
@@ -57,15 +61,18 @@ public class WeatherController{
 		}
 	}
 	
-	//Returning all the weather filtered by date
+	//Returning all the weather filtered by date , the date format is yyyy-MM-dd.
 	@GetMapping("/weather/{dateFilter}")
 	public ResponseEntity<List<Weather>> readByDate(@PathVariable Date dateFilter){
 		try
 		{
 		List<Weather> list= new ArrayList<Weather>();
 		list=weatherService.filterWeatherByDate(dateFilter);
-		HttpHeaders responseHeaders = new HttpHeaders();
-		return ResponseEntity.ok().headers(responseHeaders).body(list);
+		HttpHeaders responseHeaders = new HttpHeaders(); 
+		if (list!=null)
+			return ResponseEntity.ok().headers(responseHeaders).body(list);
+		else
+	        return ResponseEntity.notFound().build();
 		}
 		catch(Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
@@ -73,7 +80,7 @@ public class WeatherController{
 		}
 	}
 	
-	// Adding new weather data
+	// Adding new weather data, weather JSON as an input to the API 
 	@PostMapping(value="/weather")
 	public ResponseEntity<Weather> createWeather(@RequestBody Weather weather) {
 		try{
@@ -96,7 +103,8 @@ public class WeatherController{
 		
 	}
 	
-	//Delete all weather data and return response code 200 =HttpStatus.CREATED
+	/* Delete all weather data successfully and return response code 200 =HttpStatus.CREATED, 
+	if not return BADREQUEST response */
 	@DeleteMapping("/erase")
 	public ResponseEntity<String> deleteWeather(){
 		try{
@@ -108,5 +116,12 @@ public class WeatherController{
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ERROR in DELETING");
 		}
 	}
+	
+	
+	@GetMapping("/weather/listPageable")
+	/* access this api like this /weather/listPageable?page=0&size=3&sort=id */
+	Page<Weather> pageableListing(Pageable pageable) {
+		return weatherService.listPageable(pageable);
+	}		
 }
 
