@@ -27,8 +27,8 @@ public class Location {
 	public float getLat(){
 		return lat;}
 
-	public void setLat(float lan){
-		this.lon= lon;}
+	public void setLat(float lat){
+		this.lat= lat;}
 
 	public float getLan(){
 		return lon;}
@@ -55,5 +55,6 @@ public class Location {
 		this.state=state;}
 
 	public Location(){
-	/* default constructor */ /* @Embedded annotation expects to be created or throwing error */}
+	/* default constructor */ /* @Embedded annotation expects to be created or throwing error */
+}
 }

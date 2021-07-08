@@ -8,13 +8,14 @@
 package com.weather.service;
 
 
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -29,7 +30,6 @@ import org.springframework.data.domain.Sort;
 @Component
 public class WeatherService implements WeatherServiceInterface{
 	
-	private static final Logger logger = LoggerFactory.getLogger(WeatherService.class);
 
 	// auto wired 
 	@Autowired
@@ -42,24 +42,35 @@ public class WeatherService implements WeatherServiceInterface{
 		return weatherList;
 	}
 	
-	public List<Weather> readWeatherByDate(Date filterByDate) {
+	public List<Weather> readWeatherByDate(String filterByDate) throws ParseException {
+	
+		boolean checkFormat;
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		
 		if (filterByDate.toString().isEmpty()) {
 			throw new CustomWeatherException("400","Input date is empty");
 		}
-		List<Weather> weatherList =weatherRepository.findByDate(filterByDate);
+		
+		checkFormat=filterByDate.matches("([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))");
+		
+		if (!checkFormat) {
+			throw new CustomWeatherException("400","Input date format is not valid");
+		}
+		
+		List<Weather> weatherList =weatherRepository.
+				findByDate(format.parse(filterByDate));
 		return weatherList;
 	}
 	
 	public Weather addWeather(Weather weatherObj) {
 		
 		Weather persistentWeather;
-	
 		long weatherId=weatherObj.getId();
 		if ( Objects.isNull(weatherId)){
-			throw new CustomWeatherException("400","Id input is empty");
+			throw new CustomWeatherException("400","Id value is empty");
 		}
 		if (weatherRepository.existsById(weatherId)) {
-			throw new CustomWeatherException("400","The record already exists. try giving valid ID value");
+			throw new CustomWeatherException("400","The record with Id " + weatherId +" already exists. try giving valid ID value");
 		}
 		persistentWeather =weatherRepository.save(weatherObj);
 		return persistentWeather;
