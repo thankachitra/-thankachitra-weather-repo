@@ -1,9 +1,9 @@
 /**
-* A weather entity to be stored in h2 db
-*
-* @author ThankaChitra Krishnan
-* 
-*/
+ * A weather entity to be stored in h2 db
+ *
+ * @author ThankaChitra Krishnan
+ * 
+ */
 package com.weather.entity;
 
 
@@ -32,12 +32,12 @@ public class Weather {
 
 	//define primary key as id , auto generated value 
 	@Id
-	
+
 	/* this can be uncommented if the requirement is auto generate the unique id value */
-	
-//	@GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-//	@GenericGenerator(name = "native", strategy = "native")
-	
+
+	//	@GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+	//	@GenericGenerator(name = "native", strategy = "native")
+
 	@Column(name = "ID")
 	private Long id;
 
@@ -49,9 +49,9 @@ public class Weather {
 
 	//define temperature as column name
 	@Column(name = "temperature" )
-    @ElementCollection(targetClass=Double.class)
+	@ElementCollection(targetClass=Double.class)
 	private List<Double> temperature;
-  
+
 	//define Location as an embedded object in the weather table
 	@Embedded
 	@Column(name = "location")
@@ -62,24 +62,24 @@ public class Weather {
 
 	public void setId(Long id){
 		this.id = id;}
-	
+
 	public Date getDate(){
 		return this.date;}
-  
+
 	public void setDate(Date date){ 
 		this.date = date;}
-	
+
 	public List<Double> getTemperature(){
 		return this.temperature;}
-	
+
 	public void setTemperature(List<Double>  temperature){ 
 		this.temperature = temperature;}
 
 	public Location getLocation(){
 		return this.location;}
-	
+
 	public void setLocation(Location location){ 
 		this.location = location;} 
-  
+
 }
 
